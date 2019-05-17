@@ -37,7 +37,7 @@
 #define GSM_OK_Str "OK"
 #define PPPOSMUTEX_TIMEOUT 1000 / portTICK_RATE_MS
 
-#define PPPOS_CLIENT_STACK_SIZE 1024*3
+#define PPPOS_CLIENT_STACK_SIZE 1024*4
 
 
 // shared variables, use mutex to access them

@@ -13,7 +13,7 @@
 #define UART2_RTS  (UART_PIN_NO_CHANGE)
 #define UART2_CTS  (UART_PIN_NO_CHANGE)
 
-#define BUF_SIZE    2048
+#define BUF_SIZE    1024
 
 static char tag[] = "GNSS";
 
@@ -191,6 +191,6 @@ void GNSS_init(void)
     uart_param_config(UART_NUM_2, &uart_config);
     uart_set_pin(UART_NUM_2, UART2_TXD, UART2_RXD, UART2_RTS, UART2_CTS);
     uart_driver_install(UART_NUM_2, BUF_SIZE * 2, 0, 0, NULL, 0);
-	xTaskCreate(&GNSS_READ_task, "GNSS_READ_task", 10240, NULL, 10, NULL);
+	xTaskCreate(&GNSS_READ_task, "GNSS_READ_task", 20480, NULL, 10, NULL);
 
 }

@@ -6,7 +6,6 @@
 #include "esp_system.h"
 #include "Json_parse.h"
 #include "Nvs.h"
-#include "ServerTimer.h"
 #include "esp_log.h"
 
 #include "esp_wifi.h"
@@ -96,72 +95,6 @@ esp_err_t parse_Uart0(char *json_data)
 
 
 
-/*esp_err_t parse_objects_mqtt(char *json_data)
-{
-    cJSON *json_data_parse = NULL;
-    cJSON *json_data_parse_value = NULL;
-
-    json_data_parse = cJSON_Parse(json_data);
-
-    if(json_data[0]!='{')
-    {
-        printf("mqtt Json Formatting error\n");
-
-        return 0;       
-    }
-
-    if (json_data_parse == NULL) //如果数据包不为JSON则退出
-    {
-
-        printf("Json Formatting error4\n");
-
-        cJSON_Delete(json_data_parse);
-        return 0;
-    }
-    else
-    {
-        json_data_parse_value = cJSON_GetObjectItem(json_data_parse, "switch"); 
-        printf("switch= %s\n", json_data_parse_value->valuestring);
-        if(strcmp(json_data_parse_value->valuestring,"on")==0)
-        {
-            printf("switch on\n");
-            Beep_On();
-        }
-        else if(strcmp(json_data_parse_value->valuestring,"off")==0)
-        {
-            printf("switch off\n");
-            Beep_Off();
-        }
-
-    }
-
-    cJSON_Delete(json_data_parse);
-    
-
-    return 1;
-}*/
-
-
-
-
-
-/*
-{
-	"method": "thing.event.property.post",
-	"params": {
-		"CO2": 1,
-		"CurrentHumidity": 5,
-		"CurrentTemperature": 3,
-		"HCHO": 2,
-		"PM25": 4,
-		"TVOC": 1,
-		"RSSI": 0,
-        "DeviceNumber": "AIR2V001",
-        "WeatherLocationNumber":"CN888"
-	}
-}
-*/
-
 
 /*
 {
@@ -231,48 +164,6 @@ void create_mqtt_json(creat_json *pCreat_json)
 }
 
 
-/*void create_mqtt_json(creat_json *pCreat_json)
-{
-
-    cJSON *root = cJSON_CreateObject();
-   
-
-    if (sht31_readTempHum()) 
-    {		
-        double Temperature = sht31_readTemperature();
-        double Humidity = sht31_readHumidity();
-
-        cJSON_AddItemToObject(root, "Temperature", cJSON_CreateNumber(Temperature));
-        cJSON_AddItemToObject(root, "Humidity", cJSON_CreateNumber(Humidity)); 
-        ESP_LOGI("SHT30", "Temperature=%.1f, Humidity=%.1f", Temperature, Humidity);
-	} 
-    else 
-    {
-		ESP_LOGI("SHT30", "SHT31_ReadTempHum : failed");
-	}
-
-    cJSON_AddItemToObject(root, "speed", cJSON_CreateNumber((int)speed));  
-    if(valid==1) 
-    {
-        cJSON *next = cJSON_CreateObject();
-        cJSON_AddItemToObject(root, "position", next);
-        cJSON_AddItemToObject(next, "lon", cJSON_CreateNumber(longitude));
-        cJSON_AddItemToObject(next, "lat", cJSON_CreateNumber(latitude));
-        Rtc_Read(&year,&month,&day,&hour,&min,&sec);
-    }
-    
-
-
-    char *cjson_printunformat;
-    cjson_printunformat=cJSON_PrintUnformatted(root);
-    pCreat_json->creat_json_c=strlen(cjson_printunformat);
-    bzero(pCreat_json->creat_json_b,sizeof(pCreat_json->creat_json_b));
-    memcpy(pCreat_json->creat_json_b,cjson_printunformat,pCreat_json->creat_json_c);
-    printf("len=%d,mqtt_json=%s\n",pCreat_json->creat_json_c,pCreat_json->creat_json_b);
-    free(cjson_printunformat);
-    cJSON_Delete(root);
-    
-}*/
 
 
 
