@@ -15,15 +15,15 @@
 
 #define BUF_SIZE    1024
 
-static char tag[] = "GNSS";
+const char tag[] = "GNSS";
 
 
 void GNSS_READ_task(void* arg)
 {
-	char data_u2[BUF_SIZE]="\0";
-	char rmc[256]="\0";
+	static char data_u2[BUF_SIZE]="\0";
+	static char rmc[256]="\0";
 	int rmc_len=0;
-    char gga[256]="\0";
+    static char gga[256]="\0";
 	int gga_len=0;
 
 	while(1) 
@@ -157,11 +157,14 @@ void GNSS_READ_task(void* arg)
 					ESP_LOGI(tag, "Sentence - other");
 				break;
 			}*/
-			bzero(data_u2,sizeof(data_u2));   
-			bzero(rmc,sizeof(rmc));   
-            bzero(gga,sizeof(gga));  
+            memset(data_u2,0,strlen(data_u2));
+            memset(rmc,0,strlen(rmc));
+            memset(gga,0,strlen(gga));
+			//bzero(data_u2,sizeof(data_u2));   
+			//bzero(rmc,sizeof(rmc));   
+            //bzero(gga,sizeof(gga));  
 		}
-		vTaskDelay(5 / portTICK_RATE_MS);
+		//vTaskDelay(5 / portTICK_RATE_MS);
 	}
 } 
 
@@ -191,6 +194,6 @@ void GNSS_init(void)
     uart_param_config(UART_NUM_2, &uart_config);
     uart_set_pin(UART_NUM_2, UART2_TXD, UART2_RXD, UART2_RTS, UART2_CTS);
     uart_driver_install(UART_NUM_2, BUF_SIZE * 2, 0, 0, NULL, 0);
-	xTaskCreate(&GNSS_READ_task, "GNSS_READ_task", 20480, NULL, 10, NULL);
+	xTaskCreate(&GNSS_READ_task, "GNSS_READ_task", 1024*10, NULL, 12, NULL);
 
 }

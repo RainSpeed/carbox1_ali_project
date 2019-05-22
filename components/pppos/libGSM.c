@@ -37,7 +37,7 @@
 #define GSM_OK_Str "OK"
 #define PPPOSMUTEX_TIMEOUT 1000 / portTICK_RATE_MS
 
-#define PPPOS_CLIENT_STACK_SIZE 1024*4
+#define PPPOS_CLIENT_STACK_SIZE 1024*10
 
 
 // shared variables, use mutex to access them
@@ -182,10 +182,10 @@ static GSM_Cmd cmd_Connect =
 static GSM_Cmd *GSM_Init[] =
 {
 		&cmd_AT,
-		//&cmd_Reset,
+		&cmd_Reset,
 		&cmd_EchoOff,
 		&cmd_RFOn,
-		//&cmd_NoSMSInd,
+		&cmd_NoSMSInd,
 		&cmd_Pin,
 		//&cmd_Reg,
 		
@@ -250,6 +250,7 @@ static void ppp_status_cb(ppp_pcb *pcb, int err_code, void *ctx)
 		}
 		case PPPERR_USER: {
 			/* ppp_free(); -- can be called here */
+            
 			#if GSM_DEBUG
 			ESP_LOGW(TAG,"status_cb: User interrupt (disconnected)");
 			#endif
@@ -759,7 +760,8 @@ void GSM_poweron(void)
 	//vTaskDelay(8000 / portTICK_RATE_MS);
 	gpio_set_level(GPIO_GSMPWR, 1);
 	ESP_LOGI(TAG, "power key up");
-	vTaskDelay(2000 / portTICK_RATE_MS);
+	vTaskDelay(3000 / portTICK_RATE_MS);
+    //gpio_set_level(GPIO_GSMPWR, 0);
 }
 
 
@@ -790,7 +792,7 @@ int ppposInit()
 
 			tcpip_adapter_initialized = 1;
 		}
-		xTaskCreate(&pppos_client_task, "pppos_client_task", PPPOS_CLIENT_STACK_SIZE, NULL, 10, NULL);
+		xTaskCreate(&pppos_client_task, "pppos_client_task", PPPOS_CLIENT_STACK_SIZE, NULL, 3, NULL);
 		while (task_s == 0) {
 			vTaskDelay(10 / portTICK_RATE_MS);
 			xSemaphoreTake(pppos_mutex, PPPOSMUTEX_TIMEOUT);
