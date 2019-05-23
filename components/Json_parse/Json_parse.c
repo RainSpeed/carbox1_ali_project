@@ -93,9 +93,6 @@ esp_err_t parse_Uart0(char *json_data)
 }
 
 
-
-
-
 /*
 {
 	"method": "thing.event.property.post",

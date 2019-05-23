@@ -37,22 +37,29 @@ void GNSS_READ_task(void* arg)
             if(data_u2[0]=='$')
             {
                 char* rmc_start=strstr(data_u2,"$GNRMC");
-                char* rmc_end=strchr(rmc_start,'\n');
-                if((rmc_start!=NULL)&&(rmc_end!=NULL))
+                if(rmc_start!=NULL)
                 {
-                    rmc_len=rmc_end-rmc_start;
-                    strncpy(rmc,rmc_start,rmc_len-1);
+                    char* rmc_end=strchr(rmc_start,'\n');
+                    if(rmc_end!=NULL)
+                    {
+                        rmc_len=rmc_end-rmc_start;
+                        strncpy(rmc,rmc_start,rmc_len-1);
+                    }
                 }
+
                 //printf("rmc_len=%d\n",rmc_len);			
 			    printf("rmc=%s\n",rmc);
 
                 char* gga_start=strstr(data_u2,"$GNGGA");
-                char* gga_end=strchr(gga_start,'\n');
-                if((gga_start!=NULL)&&(gga_end!=NULL))
+                if(gga_start!=NULL)
                 {
-                    gga_len=gga_end-gga_start;
-                    strncpy(gga,gga_start,gga_len-1);
-                }		
+                    char* gga_end=strchr(gga_start,'\n');
+                    if(gga_end!=NULL)
+                    {
+                        gga_len=gga_end-gga_start;
+                        strncpy(gga,gga_start,gga_len-1);
+                    }	
+                }
 			    printf("gga=%s\n",gga);
 
             }
@@ -82,7 +89,6 @@ void GNSS_READ_task(void* arg)
                                 frame.date.month,
                                 frame.date.year);*/
                         Rtc_Set(2000+frame.date.year,frame.date.month,frame.date.day,frame.time.hours,frame.time.minutes,frame.time.seconds);
-                        
                         Led_R_On();
                         vTaskDelay(200 / portTICK_RATE_MS);
                         Led_R_Off();
@@ -109,60 +115,9 @@ void GNSS_READ_task(void* arg)
                 } 
             }
 
-
-			/*switch(minmea_sentence_id(rmc, false)) 
-			{
-				case MINMEA_SENTENCE_RMC:
-					//ESP_LOGI(tag, "Sentence - MINMEA_SENTENCE_RMC");					
-					if (minmea_parse_rmc(&frame, rmc)) 
-					{
-
-						latitude=minmea_tocoord(&frame.latitude);
-						longitude=minmea_tocoord(&frame.longitude);
-						speed=minmea_tofloat(&frame.speed);
-						speed=speed*1.852;
-                        valid=frame.valid;
-                        if(speed<2)
-                        {
-                            speed=0;
-                        }
-						if(valid==1) //A有效定位
-						{
- 
-                            Rtc_Set(2000+frame.date.year,frame.date.month,frame.date.day,frame.time.hours,frame.time.minutes,frame.time.seconds);
-                            
-                            Led_R_On();
-							vTaskDelay(200 / portTICK_RATE_MS);
-							Led_R_Off();
-						}
-
-                        
-						//ESP_LOGI(tag, "latitude=%f,longitude=%f,speed=%f",latitude,longitude,speed);
-					}
-					else 
-					{
-						ESP_LOGI(tag, "$xxRMC sentence is not parsed\n");
-					}
-				break;
-
-				case MINMEA_SENTENCE_GGA:
-					ESP_LOGI(tag, "Sentence - MINMEA_SENTENCE_GGA");
-				break;
-
-				case MINMEA_SENTENCE_GSV:
-					ESP_LOGI(tag, "Sentence - MINMEA_SENTENCE_GSV");
-				break;
-
-				default:
-					ESP_LOGI(tag, "Sentence - other");
-				break;
-			}*/
-            memset(data_u2,0,strlen(data_u2));
-            memset(rmc,0,strlen(rmc));
-            memset(gga,0,strlen(gga));
-			//bzero(data_u2,sizeof(data_u2));   
-			//bzero(rmc,sizeof(rmc));   
-            //bzero(gga,sizeof(gga));  
+            memset(data_u2,0,sizeof(data_u2));
+            memset(rmc,0,rmc_len);
+            memset(gga,0,gga_len);
 		}
 		//vTaskDelay(5 / portTICK_RATE_MS);
 	}

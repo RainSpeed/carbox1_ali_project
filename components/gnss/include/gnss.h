@@ -3,8 +3,8 @@
 
 extern void GNSS_init(void);
 
-float latitude;
-float longitude;
+double latitude;
+double longitude;
 double Altitude;
 double speed;
 int valid;
