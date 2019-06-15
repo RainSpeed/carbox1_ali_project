@@ -7,6 +7,7 @@
 #include "gnss.h"
 #include "Led.h"
 #include "RtcUsr.h"
+#include "driver/gpio.h"
 
 #define UART2_TXD  (UART_PIN_NO_CHANGE)
 #define UART2_RXD  (GPIO_NUM_16)
