@@ -14,7 +14,7 @@
 #include "sht31.h"
 #include "gnss.h"
 #include "RtcUsr.h"
-
+#include "Jdq.h"
 
 
 
@@ -132,6 +132,7 @@ void create_mqtt_json(creat_json *pCreat_json)
 	} 
     cJSON_AddItemToObject(params, "Speed", cJSON_CreateNumber((int)speed));
     cJSON_AddItemToObject(params, "SerialNumber", cJSON_CreateString(DeviceName));
+    cJSON_AddItemToObject(params, "JDQ1", cJSON_CreateNumber(Jdq_Status));
     if(valid==1) //A有效定位
     {
         cJSON *GeoLocation = cJSON_CreateObject();
@@ -164,3 +165,74 @@ void create_mqtt_json(creat_json *pCreat_json)
 
 
 
+
+
+/*
+{
+	"method": "thing.service.property.set",
+	"id": "216373306",
+	"params": {
+		"Switch_JDQ": 0
+	},
+	"version": "1.0.0"
+}
+*/
+
+
+esp_err_t parse_objects_mqtt(char *json_data)
+{
+    cJSON *json_data_parse = NULL;
+    cJSON *json_data_parse_method = NULL;
+    cJSON *json_data_parse_params = NULL;
+
+    cJSON *iot_params_parse = NULL;
+    cJSON *iot_params_parse_Switch_JDQ = NULL;
+
+    json_data_parse = cJSON_Parse(json_data);
+
+    if(json_data[0]!='{')
+    {
+        printf("mqtt Json Formatting error\n");
+
+        return 0;       
+    }
+
+    if (json_data_parse == NULL) //如果数据包不为JSON则退出
+    {
+
+        printf("Json Formatting error1\n");
+        cJSON_Delete(json_data_parse);
+        return 0;
+    }
+    else
+    {
+        json_data_parse_method = cJSON_GetObjectItem(json_data_parse, "method"); 
+        printf("method= %s\n", json_data_parse_method->valuestring);
+
+        json_data_parse_params = cJSON_GetObjectItem(json_data_parse, "params"); 
+        char *iot_params;
+        iot_params=cJSON_PrintUnformatted(json_data_parse_params);
+        printf("cJSON_Print= %s\n",iot_params);
+
+        iot_params_parse = cJSON_Parse(iot_params);
+        iot_params_parse_Switch_JDQ = cJSON_GetObjectItem(iot_params_parse, "JDQ1"); 
+        printf("JDQ= %d\n", iot_params_parse_Switch_JDQ->valueint);
+        Jdq_Status=iot_params_parse_Switch_JDQ->valueint;
+        if(Jdq_Status==1)
+        {
+            Jdq_On();
+        }
+        else if(Jdq_Status==0)
+        {
+            Jdq_Off();
+        }
+        
+        free(iot_params);
+        cJSON_Delete(iot_params_parse);
+    }
+    
+    cJSON_Delete(json_data_parse);
+    
+
+    return 1;
+}

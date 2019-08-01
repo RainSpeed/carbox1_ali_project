@@ -138,7 +138,7 @@ static GSM_Cmd cmd_Reg =
 {
 	.cmd = "AT+CREG?\r\n",
 	.cmdSize = sizeof("AT+CREG?\r\n")-1,
-	.cmdResponseOnOk = "CREG: 0,1",
+	.cmdResponseOnOk = "CREG: 1,1",
 	.timeoutMs = 3000,
 	.delayMs = 2000,
 	.skip = 0,
@@ -166,10 +166,10 @@ static GSM_Cmd cmd_APN =
 
 static GSM_Cmd cmd_Connect =
 {
-	//.cmd = "AT+CGDATA=\"PPP\",1\r\n",
-	//.cmdSize = sizeof("AT+CGDATA=\"PPP\",1\r\n")-1,
 	.cmd = "ATDT*99***1#\r\n",
 	.cmdSize = sizeof("ATDT*99***1#\r\n")-1,
+	// .cmd = "ATDT*99#\r\n",
+	// .cmdSize = sizeof("ATDT*99#\r\n")-1,
 	.cmdResponseOnOk = "CONNECT",
 	.timeoutMs = 30000,
 	.delayMs = 1000,
@@ -191,6 +191,7 @@ static GSM_Cmd *GSM_Init[] =
 		
 		&cmd_APN,
         &cmd_gnss,
+        &cmd_AT,
 		&cmd_Connect,
 };
 
@@ -210,6 +211,12 @@ static void ppp_status_cb(ppp_pcb *pcb, int err_code, void *ctx)
 			ESP_LOGI(TAG,"status_cb: Connected");
 			#if PPP_IPV4_SUPPORT
 			ESP_LOGI(TAG,"   ipaddr    = %s", ipaddr_ntoa(&pppif->ip_addr));
+            /*if(strcmp(ipaddr_ntoa(&pppif->ip_addr),"0.0.0.0")==0)
+            {
+                printf("000\r\n");
+                err_code=PPPERR_USER;
+                break;
+            }*/
 			ESP_LOGI(TAG,"   gateway   = %s", ipaddr_ntoa(&pppif->gw));
 			ESP_LOGI(TAG,"   netmask   = %s", ipaddr_ntoa(&pppif->netmask));
 			xEventGroupSetBits(ppp_event_group, PPP_CONNECTED_BIT);
@@ -762,6 +769,7 @@ void GSM_poweron(void)
 	ESP_LOGI(TAG, "power key up");
 	vTaskDelay(3000 / portTICK_RATE_MS);
     //gpio_set_level(GPIO_GSMPWR, 0);
+    //vTaskDelay(8000 / portTICK_RATE_MS);
 }
 
 
@@ -779,6 +787,7 @@ int ppposInit()
 	ip_addr_t dnsserver;
 	ESP_LOGI("", "SYSTEM_EVENT_STA_GOT_IP");
 	inet_pton(AF_INET, "8.8.8.8", &dnsserver);
+    //inet_pton(AF_INET, "0.0.0.0", &dnsserver);
 	dns_setserver(0, &dnsserver);
 	inet_pton(AF_INET, "8.8.4.4", &dnsserver);
 	dns_setserver(1, &dnsserver);

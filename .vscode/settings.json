@@ -64,7 +64,8 @@
         "libgsm.h": "c",
         "gnss.h": "c",
         "minmea.h": "c",
-        "sht31.h": "c"
+        "sht31.h": "c",
+        "jdq.h": "c"
     },
     "files.autoGuessEncoding": true,
 

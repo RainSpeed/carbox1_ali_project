@@ -84,9 +84,9 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
             //ESP_LOGW(TAG, "MQTT_EVENT_user_context=%s",event->user_context);
             ESP_LOGW(TAG, "MQTT_EVENT_topic=%s",event->topic);            
 
-            //parse_objects_mqtt(event->data);//收到平台MQTT数据并解析
+            parse_objects_mqtt(event->data);//收到平台MQTT数据并解析
             bzero(event->data,strlen(event->data));
-            //Mqtt_Send_Msg(Topic_Post);
+            Mqtt_Send_Msg(Topic_Post);
             
             break;
 

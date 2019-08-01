@@ -22,7 +22,7 @@
 #include "sht31.h"
 #include "libGSM.h"
 #include "gnss.h"
-
+#include "Jdq.h"
 
 extern const int PPP_CONNECTED_BIT;
 
@@ -124,6 +124,7 @@ void app_main(void)
   Uart0_Init();
   key_Init();
   GNSS_init();
+  Jdq_Init();
   xTaskCreate(Uart0_Task, "Uart0_Task", 4096, NULL, 10, NULL);
   read_flash_usr();//读取开机次数
 
